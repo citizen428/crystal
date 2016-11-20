@@ -76,7 +76,7 @@ module Crystal
     def initialize(@program : Program,
                    @scope : Type, @path_lookup : Type, @location : Location?,
                    @vars = {} of String => ASTNode, @block : Block? = nil, @def : Def? = nil)
-      @str = MemoryIO.new(512) # Can't be String::Builder because of `{{debug()}}
+      @str = IO::Memory.new(512) # Can't be String::Builder because of `{{debug()}}
       @last = Nop.new
     end
 
@@ -397,8 +397,8 @@ module Crystal
             produce_tuple = node.names.first == "T"
           when GenericInstanceType
             produce_tuple = ((splat_index = path_lookup.splat_index) &&
-                             path_lookup.type_vars.keys.index(node.names.first) == splat_index) ||
-                            (path_lookup.double_variadic? && path_lookup.type_vars.first_key == node.names.first)
+              path_lookup.type_vars.keys.index(node.names.first) == splat_index) ||
+              (path_lookup.double_variadic? && path_lookup.type_vars.first_key == node.names.first)
           else
             produce_tuple = false
           end

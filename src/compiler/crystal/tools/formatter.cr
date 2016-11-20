@@ -51,8 +51,8 @@ module Crystal
     @line : Int32
     @column : Int32
     @token : Token
-    @output : MemoryIO
-    @line_output : MemoryIO
+    @output : IO::Memory
+    @line_output : IO::Memory
     @wrote_newline : Bool
     @wrote_comment : Bool
     @macro_state : Token::MacroState
@@ -88,8 +88,8 @@ module Crystal
       @token = @lexer.token
       @token = next_token
 
-      @output = MemoryIO.new(source.bytesize)
-      @line_output = MemoryIO.new
+      @output = IO::Memory.new(source.bytesize)
+      @line_output = IO::Memory.new
       @wrote_newline = false
       @wrote_comment = false
       @macro_state = Token::MacroState.default
@@ -213,9 +213,9 @@ module Crystal
         else
           next_exp = node.expressions[i + 1]
           needs_two_lines = !last?(i, node.expressions) && !exp.is_a?(Attribute) &&
-                            !exp.is_a?(MacroIf) &&
-                            (!(exp.is_a?(Def) && exp.abstract? && next_exp.is_a?(Def) && next_exp.abstract?)) &&
-                            (needs_two_lines?(exp) || needs_two_lines?(next_exp))
+            !exp.is_a?(MacroIf) &&
+            (!(exp.is_a?(Def) && exp.abstract? && next_exp.is_a?(Def) && next_exp.abstract?)) &&
+            (needs_two_lines?(exp) || needs_two_lines?(next_exp))
         end
 
         @assign_length = max_length
